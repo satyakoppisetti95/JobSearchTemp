@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobSearch.Models;
 using JobSearchTemp.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JobSearchTemp.Controllers
 {
@@ -21,14 +20,12 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Candidates
-        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Candidates.ToListAsync());
         }
 
         // GET: Candidates/Details/5
-        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,7 +44,6 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Candidates/Create
-        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -58,7 +54,6 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> Create([Bind("CandidateId,EmailId,FirstName,LastName,Mobile,Gender,Age,Province,City,Skills,registration_date")] Candidate candidate)
         {
             if (ModelState.IsValid)
@@ -71,7 +66,6 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Candidates/Edit/5
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,7 +86,6 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> Edit(int id, [Bind("CandidateId,EmailId,FirstName,LastName,Mobile,Gender,Age,Province,City,Skills,registration_date")] Candidate candidate)
         {
             if (id != candidate.CandidateId)
@@ -124,7 +117,6 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Candidates/Delete/5
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,7 +137,6 @@ namespace JobSearchTemp.Controllers
         // POST: Candidates/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var candidate = await _context.Candidates.FindAsync(id);

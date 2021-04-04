@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobSearch.Models;
 using JobSearchTemp.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JobSearchTemp.Controllers
 {
@@ -21,14 +20,13 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Resumes
-        [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Resumes.ToListAsync());
+            var jobsDBContext = _context.Resumes.Include(r => r.Candidate);
+            return View(await jobsDBContext.ToListAsync());
         }
 
         // GET: Resumes/Details/5
-        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,6 +35,7 @@ namespace JobSearchTemp.Controllers
             }
 
             var resume = await _context.Resumes
+                .Include(r => r.Candidate)
                 .FirstOrDefaultAsync(m => m.ResumeId == id);
             if (resume == null)
             {
@@ -47,9 +46,9 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Resumes/Create
-        [Authorize]
         public IActionResult Create()
         {
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId");
             return View();
         }
 
@@ -58,8 +57,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Create([Bind("ResumeId,education,experience,skills")] Resume resume)
+        public async Task<IActionResult> Create([Bind("ResumeId,CandidateId,education,experience,skills")] Resume resume)
         {
             if (ModelState.IsValid)
             {
@@ -67,11 +65,11 @@ namespace JobSearchTemp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", resume.CandidateId);
             return View(resume);
         }
 
         // GET: Resumes/Edit/5
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,6 +82,7 @@ namespace JobSearchTemp.Controllers
             {
                 return NotFound();
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", resume.CandidateId);
             return View(resume);
         }
 
@@ -92,8 +91,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("ResumeId,education,experience,skills")] Resume resume)
+        public async Task<IActionResult> Edit(int id, [Bind("ResumeId,CandidateId,education,experience,skills")] Resume resume)
         {
             if (id != resume.ResumeId)
             {
@@ -120,11 +118,11 @@ namespace JobSearchTemp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", resume.CandidateId);
             return View(resume);
         }
 
         // GET: Resumes/Delete/5
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,6 +131,7 @@ namespace JobSearchTemp.Controllers
             }
 
             var resume = await _context.Resumes
+                .Include(r => r.Candidate)
                 .FirstOrDefaultAsync(m => m.ResumeId == id);
             if (resume == null)
             {
@@ -145,7 +144,6 @@ namespace JobSearchTemp.Controllers
         // POST: Resumes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var resume = await _context.Resumes.FindAsync(id);

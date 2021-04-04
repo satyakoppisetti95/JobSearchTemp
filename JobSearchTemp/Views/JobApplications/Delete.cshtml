@@ -12,11 +12,29 @@
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Candidate)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Candidate.CandidateId)
+        </dd class>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.JobPosting)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.JobPosting.JobId)
+        </dd class>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.AppliedDate)
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.AppliedDate)
         </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Resume)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Resume.ResumeId)
+        </dd class>
     </dl>
     
     <form asp-action="Delete">

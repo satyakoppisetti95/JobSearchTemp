@@ -4,14 +4,16 @@ using JobSearchTemp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JobSearchTemp.Migrations
 {
     [DbContext(typeof(JobsDBContext))]
-    partial class JobsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210404011501_all_table_fixes")]
+    partial class all_table_fixes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

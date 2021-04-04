@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobSearch.Models;
 using JobSearchTemp.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JobSearchTemp.Controllers
 {
@@ -21,14 +20,13 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Notifications
-        [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Notifications.ToListAsync());
+            var jobsDBContext = _context.Notifications.Include(n => n.Candidate).Include(n => n.Employer);
+            return View(await jobsDBContext.ToListAsync());
         }
 
         // GET: Notifications/Details/5
-        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,6 +35,8 @@ namespace JobSearchTemp.Controllers
             }
 
             var notification = await _context.Notifications
+                .Include(n => n.Candidate)
+                .Include(n => n.Employer)
                 .FirstOrDefaultAsync(m => m.NotificationId == id);
             if (notification == null)
             {
@@ -47,9 +47,10 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: Notifications/Create
-        [Authorize]
         public IActionResult Create()
         {
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId");
+            ViewData["EmployerId"] = new SelectList(_context.Employers, "EmployerID", "EmployerID");
             return View();
         }
 
@@ -58,8 +59,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Create([Bind("NotificationId,Text,IsRead")] Notification notification)
+        public async Task<IActionResult> Create([Bind("NotificationId,EmployerId,CandidateId,Text,IsRead")] Notification notification)
         {
             if (ModelState.IsValid)
             {
@@ -67,11 +67,12 @@ namespace JobSearchTemp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", notification.CandidateId);
+            ViewData["EmployerId"] = new SelectList(_context.Employers, "EmployerID", "EmployerID", notification.EmployerId);
             return View(notification);
         }
 
         // GET: Notifications/Edit/5
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,6 +85,8 @@ namespace JobSearchTemp.Controllers
             {
                 return NotFound();
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", notification.CandidateId);
+            ViewData["EmployerId"] = new SelectList(_context.Employers, "EmployerID", "EmployerID", notification.EmployerId);
             return View(notification);
         }
 
@@ -92,8 +95,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("NotificationId,Text,IsRead")] Notification notification)
+        public async Task<IActionResult> Edit(int id, [Bind("NotificationId,EmployerId,CandidateId,Text,IsRead")] Notification notification)
         {
             if (id != notification.NotificationId)
             {
@@ -120,11 +122,12 @@ namespace JobSearchTemp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", notification.CandidateId);
+            ViewData["EmployerId"] = new SelectList(_context.Employers, "EmployerID", "EmployerID", notification.EmployerId);
             return View(notification);
         }
 
         // GET: Notifications/Delete/5
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,6 +136,8 @@ namespace JobSearchTemp.Controllers
             }
 
             var notification = await _context.Notifications
+                .Include(n => n.Candidate)
+                .Include(n => n.Employer)
                 .FirstOrDefaultAsync(m => m.NotificationId == id);
             if (notification == null)
             {
@@ -145,7 +150,6 @@ namespace JobSearchTemp.Controllers
         // POST: Notifications/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var notification = await _context.Notifications.FindAsync(id);

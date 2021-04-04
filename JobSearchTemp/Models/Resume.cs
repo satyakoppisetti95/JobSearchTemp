@@ -10,7 +10,9 @@ namespace JobSearch.Models
     {
         [Key]
         public int ResumeId { get; set; }
-        public Candidate Candidate { get; set; }
+        public int CandidateId { get; set; }
+
+        public virtual Candidate Candidate { get; set; }
 
         public string education { get; set; }
         public string experience { get; set; }

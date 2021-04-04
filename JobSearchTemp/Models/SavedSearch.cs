@@ -10,8 +10,10 @@ namespace JobSearch.Models
     {
         [Key]
         public int SavedSearchId { get; set; }
-        public Candidate Candidate;
-        public JobPosting Job;
+        public int CandidateId { get; set; }
+        public  Candidate Candidate;
+        public int JobPostingId { get; set; }
+        public  JobPosting Job;
 
 
     }

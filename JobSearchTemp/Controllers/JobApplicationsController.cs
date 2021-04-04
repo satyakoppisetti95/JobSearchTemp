@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobSearch.Models;
 using JobSearchTemp.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JobSearchTemp.Controllers
 {
@@ -21,14 +20,13 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: JobApplications
-        [Authorize]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.JobApplications.ToListAsync());
+            var jobsDBContext = _context.JobApplications.Include(j => j.Candidate).Include(j => j.JobPosting).Include(j => j.Resume);
+            return View(await jobsDBContext.ToListAsync());
         }
 
         // GET: JobApplications/Details/5
-        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -37,6 +35,9 @@ namespace JobSearchTemp.Controllers
             }
 
             var jobApplication = await _context.JobApplications
+                .Include(j => j.Candidate)
+                .Include(j => j.JobPosting)
+                .Include(j => j.Resume)
                 .FirstOrDefaultAsync(m => m.JobApplicationId == id);
             if (jobApplication == null)
             {
@@ -47,9 +48,11 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: JobApplications/Create
-        [Authorize]
         public IActionResult Create()
         {
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId");
+            ViewData["JobPostingId"] = new SelectList(_context.JobPostings, "JobId", "JobId");
+            ViewData["ResumeId"] = new SelectList(_context.Resumes, "ResumeId", "ResumeId");
             return View();
         }
 
@@ -58,8 +61,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Create([Bind("JobApplicationId,AppliedDate")] JobApplication jobApplication)
+        public async Task<IActionResult> Create([Bind("JobApplicationId,CandidateId,JobPostingId,AppliedDate,ResumeId")] JobApplication jobApplication)
         {
             if (ModelState.IsValid)
             {
@@ -67,11 +69,13 @@ namespace JobSearchTemp.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", jobApplication.CandidateId);
+            ViewData["JobPostingId"] = new SelectList(_context.JobPostings, "JobId", "JobId", jobApplication.JobPostingId);
+            ViewData["ResumeId"] = new SelectList(_context.Resumes, "ResumeId", "ResumeId", jobApplication.ResumeId);
             return View(jobApplication);
         }
 
         // GET: JobApplications/Edit/5
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -84,6 +88,9 @@ namespace JobSearchTemp.Controllers
             {
                 return NotFound();
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", jobApplication.CandidateId);
+            ViewData["JobPostingId"] = new SelectList(_context.JobPostings, "JobId", "JobId", jobApplication.JobPostingId);
+            ViewData["ResumeId"] = new SelectList(_context.Resumes, "ResumeId", "ResumeId", jobApplication.ResumeId);
             return View(jobApplication);
         }
 
@@ -92,8 +99,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("JobApplicationId,AppliedDate")] JobApplication jobApplication)
+        public async Task<IActionResult> Edit(int id, [Bind("JobApplicationId,CandidateId,JobPostingId,AppliedDate,ResumeId")] JobApplication jobApplication)
         {
             if (id != jobApplication.JobApplicationId)
             {
@@ -120,11 +126,13 @@ namespace JobSearchTemp.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["CandidateId"] = new SelectList(_context.Candidates, "CandidateId", "CandidateId", jobApplication.CandidateId);
+            ViewData["JobPostingId"] = new SelectList(_context.JobPostings, "JobId", "JobId", jobApplication.JobPostingId);
+            ViewData["ResumeId"] = new SelectList(_context.Resumes, "ResumeId", "ResumeId", jobApplication.ResumeId);
             return View(jobApplication);
         }
 
         // GET: JobApplications/Delete/5
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -133,6 +141,9 @@ namespace JobSearchTemp.Controllers
             }
 
             var jobApplication = await _context.JobApplications
+                .Include(j => j.Candidate)
+                .Include(j => j.JobPosting)
+                .Include(j => j.Resume)
                 .FirstOrDefaultAsync(m => m.JobApplicationId == id);
             if (jobApplication == null)
             {
@@ -145,7 +156,6 @@ namespace JobSearchTemp.Controllers
         // POST: JobApplications/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var jobApplication = await _context.JobApplications.FindAsync(id);

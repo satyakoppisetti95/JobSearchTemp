@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using JobSearch.Models;
 using JobSearchTemp.Data;
-using Microsoft.AspNetCore.Authorization;
 
 namespace JobSearchTemp.Controllers
 {
@@ -21,14 +20,12 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: SavedSearches
-        [Authorize]
         public async Task<IActionResult> Index()
         {
             return View(await _context.SavedSearches.ToListAsync());
         }
 
         // GET: SavedSearches/Details/5
-        [Authorize]
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -47,7 +44,6 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: SavedSearches/Create
-        [Authorize]
         public IActionResult Create()
         {
             return View();
@@ -58,8 +54,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Create([Bind("SavedSearchId")] SavedSearch savedSearch)
+        public async Task<IActionResult> Create([Bind("SavedSearchId,CandidateId,JobPostingId")] SavedSearch savedSearch)
         {
             if (ModelState.IsValid)
             {
@@ -71,7 +66,6 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: SavedSearches/Edit/5
-        [Authorize]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -92,8 +86,7 @@ namespace JobSearchTemp.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize]
-        public async Task<IActionResult> Edit(int id, [Bind("SavedSearchId")] SavedSearch savedSearch)
+        public async Task<IActionResult> Edit(int id, [Bind("SavedSearchId,CandidateId,JobPostingId")] SavedSearch savedSearch)
         {
             if (id != savedSearch.SavedSearchId)
             {
@@ -124,7 +117,6 @@ namespace JobSearchTemp.Controllers
         }
 
         // GET: SavedSearches/Delete/5
-        [Authorize]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,7 +137,6 @@ namespace JobSearchTemp.Controllers
         // POST: SavedSearches/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        [Authorize]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var savedSearch = await _context.SavedSearches.FindAsync(id);

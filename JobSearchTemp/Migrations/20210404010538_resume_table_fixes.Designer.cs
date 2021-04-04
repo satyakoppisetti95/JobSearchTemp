@@ -4,14 +4,16 @@ using JobSearchTemp.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace JobSearchTemp.Migrations
 {
     [DbContext(typeof(JobsDBContext))]
-    partial class JobsDBContextModelSnapshot : ModelSnapshot
+    [Migration("20210404010538_resume_table_fixes")]
+    partial class resume_table_fixes
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -98,20 +100,20 @@ namespace JobSearchTemp.Migrations
                     b.Property<DateTime>("AppliedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CandidateId")
+                    b.Property<int?>("CandidateId")
                         .HasColumnType("int");
 
-                    b.Property<int>("JobPostingId")
+                    b.Property<int?>("JobId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ResumeId")
+                    b.Property<int?>("ResumeId")
                         .HasColumnType("int");
 
                     b.HasKey("JobApplicationId");
 
                     b.HasIndex("CandidateId");
 
-                    b.HasIndex("JobPostingId");
+                    b.HasIndex("JobId");
 
                     b.HasIndex("ResumeId");
 
@@ -128,7 +130,7 @@ namespace JobSearchTemp.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("EmployerId")
+                    b.Property<int?>("EmployerID")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsActive")
@@ -139,7 +141,7 @@ namespace JobSearchTemp.Migrations
 
                     b.HasKey("JobId");
 
-                    b.HasIndex("EmployerId");
+                    b.HasIndex("EmployerID");
 
                     b.ToTable("JobPostings");
                 });
@@ -151,10 +153,10 @@ namespace JobSearchTemp.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CandidateId")
+                    b.Property<int?>("CandidateId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployerId")
+                    b.Property<int?>("EmployerID")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsRead")
@@ -167,7 +169,7 @@ namespace JobSearchTemp.Migrations
 
                     b.HasIndex("CandidateId");
 
-                    b.HasIndex("EmployerId");
+                    b.HasIndex("EmployerID");
 
                     b.ToTable("Notifications");
                 });
@@ -205,12 +207,6 @@ namespace JobSearchTemp.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("CandidateId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("JobPostingId")
-                        .HasColumnType("int");
-
                     b.HasKey("SavedSearchId");
 
                     b.ToTable("SavedSearches");
@@ -220,25 +216,19 @@ namespace JobSearchTemp.Migrations
                 {
                     b.HasOne("JobSearch.Models.Candidate", "Candidate")
                         .WithMany()
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CandidateId");
 
-                    b.HasOne("JobSearch.Models.JobPosting", "JobPosting")
+                    b.HasOne("JobSearch.Models.JobPosting", "Job")
                         .WithMany()
-                        .HasForeignKey("JobPostingId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("JobId");
 
                     b.HasOne("JobSearch.Models.Resume", "Resume")
                         .WithMany()
-                        .HasForeignKey("ResumeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ResumeId");
 
                     b.Navigation("Candidate");
 
-                    b.Navigation("JobPosting");
+                    b.Navigation("Job");
 
                     b.Navigation("Resume");
                 });
@@ -247,9 +237,7 @@ namespace JobSearchTemp.Migrations
                 {
                     b.HasOne("JobSearch.Models.Employer", "employer")
                         .WithMany("JobPostings")
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployerID");
 
                     b.Navigation("employer");
                 });
@@ -258,19 +246,15 @@ namespace JobSearchTemp.Migrations
                 {
                     b.HasOne("JobSearch.Models.Candidate", "Candidate")
                         .WithMany()
-                        .HasForeignKey("CandidateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CandidateId");
 
-                    b.HasOne("JobSearch.Models.Employer", "Employer")
+                    b.HasOne("JobSearch.Models.Employer", "EmployerId")
                         .WithMany()
-                        .HasForeignKey("EmployerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("EmployerID");
 
                     b.Navigation("Candidate");
 
-                    b.Navigation("Employer");
+                    b.Navigation("EmployerId");
                 });
 
             modelBuilder.Entity("JobSearch.Models.Resume", b =>

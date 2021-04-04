@@ -10,8 +10,10 @@ namespace JobSearch.Models
     {
         [Key]
         public int NotificationId { get; set; }
-        public  Employer EmployerId { get; set; }
-        public Candidate Candidate { get; set; }
+        public int EmployerId { get; set; }
+        public  virtual Employer Employer { get; set; }
+        public int CandidateId { get; set; }
+        public virtual Candidate Candidate { get; set; }
         public string Text { get; set; }
         public bool IsRead { get; set; }
     }

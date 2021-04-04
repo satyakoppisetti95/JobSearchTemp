@@ -10,11 +10,13 @@ namespace JobSearch.Models
     {
         [Key]
         public int JobApplicationId { get; set; }
-        public Candidate Candidate { get; set; }
-        public JobPosting Job { get; set; }
+        public int CandidateId { get; set; }
+        public virtual Candidate Candidate { get; set; }
+        public int JobPostingId { get; set; }
+        public virtual JobPosting JobPosting { get; set; }
         public DateTime AppliedDate { get; set; }
-
-        public Resume Resume { get; set; }
+        public int ResumeId { get; set; }
+        public virtual Resume Resume { get; set; }
 
     }
 }

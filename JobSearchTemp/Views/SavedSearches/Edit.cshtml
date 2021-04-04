@@ -14,6 +14,16 @@
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="SavedSearchId" />
             <div class="form-group">
+                <label asp-for="CandidateId" class="control-label"></label>
+                <input asp-for="CandidateId" class="form-control" />
+                <span asp-validation-for="CandidateId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JobPostingId" class="control-label"></label>
+                <input asp-for="JobPostingId" class="form-control" />
+                <span asp-validation-for="JobPostingId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
